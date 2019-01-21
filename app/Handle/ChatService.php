@@ -99,6 +99,10 @@ class ChatService
 
     }
 
+    public function addFriend($server,$data){
+
+    }
+
     public function deleteUser($fd){
         Redis::srem('clients',$fd);
         Redis::del('client:'.$fd);

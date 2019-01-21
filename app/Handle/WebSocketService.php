@@ -10,7 +10,7 @@ namespace App\Handle;
 
 use Hhxsv5\LaravelS\Swoole\WebSocketHandlerInterface;
 use Illuminate\Support\Facades\Redis;
-use Auth;
+use \Auth;
 class WebSocketService implements WebSocketHandlerInterface
 {
     protected $cartServer;
@@ -22,11 +22,11 @@ class WebSocketService implements WebSocketHandlerInterface
 
     public function onOpen(\swoole_websocket_server $server, \swoole_http_request $request)
     {
-        \Log::info('New WebSocket connection', [$request->fd, $request->get["sessionid"], session()->getId(), auth()->id(), session(['yyy' => time()])]);
+        \Log::info('New WebSocket connection', [$request->fd,  Auth::user()]);
         $this->cartServer->storeUser($request);
 
-
     }
+
     public function onMessage(\swoole_websocket_server $server, \swoole_websocket_frame $frame)
     {
         \Log::info('Received message', [$frame->fd, $this->name, $frame->opcode, $frame->finish]);
@@ -44,6 +44,9 @@ class WebSocketService implements WebSocketHandlerInterface
                 break;
             case 'send':
                 $this->cartServer->Chat($server,$data);
+                break;
+            case 'addFriend':
+                $this->cartServer->addFriend($server,$data);
                 break;
             default:
                 return ;

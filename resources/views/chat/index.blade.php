@@ -16,13 +16,13 @@
 <body>
 
 <script src="{{ asset('/static/chat/src/layui.js') }}"></script>
+<script src="{{ asset('/static/chat/dist/chat.js') }}"></script>
 <script>
     var user;
     @if($user)
         user = '{{$user}}';
     user = JSON.parse(user.replace(/&quot;/g, '"'));
     @endif
-    var wsServer,ws;
     layui.use('layim', function (layim) {
 
 
@@ -91,7 +91,7 @@
             //,min: true //是否始终最小化主面板，默认false
             , notice: true //是否开启桌面消息提醒，默认false
             //,voice: false //声音提醒，默认开启，声音文件为：default.mp3
-            ,find: layui.cache.dir + 'css/modules/layim/html/find.html' //发现页面地址，若不开启，剔除该项即可
+            ,find: '{{route('chat.find')}}' //发现页面地址，若不开启，剔除该项即可
 
             , msgbox: layui.cache.dir + 'css/modules/layim/html/msgbox.html' //消息盒子页面地址，若不开启，剔除该项即可
             , chatLog: layui.cache.dir + 'css/modules/layim/html/chatlog.html' //聊天记录页面地址，若不开启，剔除该项即可
@@ -136,7 +136,6 @@
 
         //监听layim建立就绪
         layim.on('ready', function (res) {
-
             webSocket();//websocket 启动
             layim.msgbox(4); //模拟消息盒子有新消息，实际使用时，一般是动态获得
 
@@ -219,54 +218,6 @@
             }
         });
 
-        function showUsers(data) {
-
-            console.log(data)
-            for (client in data.others) {
-                var info = JSON.parse(data.others[client]);
-                layim.addList({
-                    type: 'friend'
-                    , avatar: info.avatar
-                    , username: info.name
-                    , groupid: 3
-                    , id: info.id
-                    , client_id: info.client_id
-                    , remark: "本人冲田杏梨将结束AV女优的工作"
-                });
-            }
-
-        }
-        function webSocket() {
-             wsServer = 'ws://192.168.10.10:5200';
-             ws = new WebSocket(wsServer);
-
-            ws.onopen = function (evt) {
-                console.log("Connection success");
-                ws.send(JSON.stringify({cmd: 'login', data: user}))
-                ws.send(JSON.stringify({cmd: 'getOnline',data:user}));
-            }
-
-            ws.onmessage = function (event) {
-
-                var data = JSON.parse(event.data);
-
-                if (data.cmd == 'getOnline') {
-                    showUsers(data.clients)
-
-                } else if (data.cmd == 'message') {
-
-                    layim.getMessage(data.from)
-
-                } else if (data.cmd == 'login') {
-
-                    user.client_id = data.data.client_id;
-                }
-            }
-
-            ws.onclose = function (event) {
-
-            }
-        }
 
 
     });

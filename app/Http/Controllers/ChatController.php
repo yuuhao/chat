@@ -70,4 +70,19 @@ class ChatController extends Controller
     public function getChatlog($send_id,$receive_id){
         
     }
+
+    public function find(){
+
+        $users = User::query()->where('id','<>',auth()->id());
+        if( $filter = request('search','')){
+            $users->orWhere('id',$filter);
+        }
+
+        $users = $users->get();
+        return view('chat.find',compact('users'));
+    }
+
+    public function addFirend(){
+
+    }
 }

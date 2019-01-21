@@ -19,6 +19,7 @@ Route::group(['middleware' => 'auth','prefix' => 'chat'],function($router){
 
     Route::get('/','ChatController@index');
     Route::get('/init','ChatController@init')->name('chat.init');
+    Route::get('/find','ChatController@find')->name('chat.find');
 
 });
 
