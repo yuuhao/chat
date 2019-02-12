@@ -71,6 +71,11 @@ class ChatController extends Controller
         
     }
 
+    /**
+     *
+     * abc
+    */
+
     public function find(){
 
         $users = User::query()->where('id','<>',auth()->id());
